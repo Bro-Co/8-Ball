@@ -10,15 +10,15 @@ class Ball
         xPos = x;
         yPos = y;
         diam = d;
-        vel = 1;
+        vel = 50;
         dir = 0;
         col = new Color(rgb[0], rgb[1], rgb[2]);
     }
 
-    public void move()
+    public void applyTime(long t)
     {
-        xPos += vel*Math.cos(dir);
-        yPos += vel*Math.sin(dir);
+        xPos += vel*Math.cos(dir)*t/Math.pow(10, 9);
+        yPos += vel*Math.sin(dir)*t/Math.pow(10, 9);
     }
 
     public void display(Graphics g)
