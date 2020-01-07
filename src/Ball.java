@@ -21,7 +21,7 @@ class Ball
         yPos += vel*Math.sin(dir)*t/Math.pow(10, 9);
     }
 
-    public void display(Graphics g)
+    public void displayBall(Graphics g)
     {
         g.setColor(col);
         g.fillOval(

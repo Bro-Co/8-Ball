@@ -19,7 +19,7 @@ class Game extends JPanel
     {
         super.paintComponent(g);
         for (Ball b: balls) {
-            b.display(g);
+            b.displayBall(g);
         }
         repaint();
 
