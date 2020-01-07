@@ -11,6 +11,11 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1W50Ys3VtR0yLoARkeosRTQPa7i" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
   </component>
@@ -54,6 +59,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="689" y="405" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1578425129819">
+      <screen x="0" y="23" width="1680" height="972" />
+    </state>
+    <state x="689" y="405" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog/0.23.1680.972@0.23.1680.972" timestamp="1578425129819" />
     <state width="1340" height="206" key="GridCell.Tab.0.bottom" timestamp="1578424244048">
       <screen x="0" y="0" width="1440" height="860" />
     </state>
