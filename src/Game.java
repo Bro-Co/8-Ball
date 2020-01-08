@@ -3,10 +3,13 @@ import java.awt.*;
 
 class Game extends JPanel
 {
-    long ticks = 0;
-    final int DIAM = 20, FPS = 60;
-    final long START = System.nanoTime();
-    Ball[] balls = {new Ball(150, 200, DIAM, new int[]{255, 0, 0}), new Ball(450, 200, DIAM, new int[]{255, 0, 0})};
+    long nextFrameTime = 0;
+    final int DIAMETER = 20, FPS = 5;
+    final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)Math.pow(10, 9)/FPS;
+    Ball[] balls = {
+            new Ball(150, 200, DIAMETER, new int[]{255, 0, 0}),
+            new Ball(450, 200, DIAMETER, new int[]{255, 0, 0})
+    };
 
     @Override
     public Dimension getPreferredSize()
@@ -24,14 +27,11 @@ class Game extends JPanel
         repaint();
 
         for (Ball b: balls) {
-            b.applyTime((long)Math.pow(10, 9)/FPS);
+            b.applyTime(TIME_INCREMENT);
         }
 
-        ticks += Math.pow(10, 9)/FPS;
-        System.out.println(ticks-(System.nanoTime()-START));
-        long end = 0;
-        do {
-            end = System.nanoTime();
-        } while (end-START < ticks);
+        nextFrameTime += TIME_INCREMENT;
+        System.out.println(nextFrameTime-(System.nanoTime()-START_TIME));
+        while (System.nanoTime()-START_TIME < nextFrameTime);
     }
 }
