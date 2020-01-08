@@ -4,7 +4,7 @@ import java.awt.*;
 class Game extends JPanel
 {
     long nextFrameTime = 0;
-    final int DIAMETER = 20, FPS = 5;
+    final int DIAMETER = 20, FPS = 60;
     final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)Math.pow(10, 9)/FPS;
     Ball[] balls = {
             new Ball(150, 200, DIAMETER, new int[]{255, 0, 0}),
@@ -14,6 +14,7 @@ class Game extends JPanel
     @Override
     public Dimension getPreferredSize()
     {
+        balls[0].applyVel(50, 0);
         return new Dimension(600,400);
     }
 

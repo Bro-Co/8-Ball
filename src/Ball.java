@@ -15,6 +15,12 @@ class Ball
         col = new Color(rgb[0], rgb[1], rgb[2]);
     }
 
+    public void applyVel(double x, double y)
+    {
+        xVel = x;
+        yVel = y;
+    }
+
     public void applyTime(long t)
     {
         xPos += xVel*t/Math.pow(10, 9);
