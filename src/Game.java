@@ -1,20 +1,31 @@
 import javax.swing.*;
 import java.awt.*;
+import java.util.PriorityQueue;
 
-class Game extends JPanel
+public class Game extends JPanel
 {
-    long nextFrameTime = 0;
-    final int DIAMETER = 20, FPS = 60;
-    final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)Math.pow(10, 9)/FPS;
-    Ball[] balls = {
+    private long nextFrameTime = 0;
+    private final int DIAMETER = 20, FPS = 60;
+    private final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)Math.pow(10, 9)/FPS;
+    private Ball[] balls = {
             new Ball(150, 200, DIAMETER, new int[]{255, 0, 0}),
             new Ball(450, 200, DIAMETER, new int[]{255, 0, 0})
     };
+    private PriorityQueue<Collision> collisions = new PriorityQueue<>();
+
+    public Game()
+    {
+        balls[0].applyVel(50, 0);
+        for (int i = 0; i < balls.length-1; i++) {
+            for (int j = i+1; j < balls.length; j++) {
+                
+            }
+        }
+    }
 
     @Override
     public Dimension getPreferredSize()
     {
-        balls[0].applyVel(50, 0);
         return new Dimension(600,400);
     }
 

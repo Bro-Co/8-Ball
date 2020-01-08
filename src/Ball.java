@@ -1,6 +1,6 @@
 import java.awt.*;
 
-class Ball
+public class Ball
 {
     private double xPos, yPos, diam, xVel,  yVel;
     private Color col;
