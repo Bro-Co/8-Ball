@@ -5,28 +5,48 @@ import java.util.PriorityQueue;
 public class Game extends JPanel
 {
     private long nextFrameTime = 0;
-    private final int DIAMETER = 20, FPS = 60;
+    private final int RADIUS = 20, FPS = 60, WIDTH = 600, HEIGHT = 400;
     private final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)Math.pow(10, 9)/FPS;
     private Ball[] balls = {
-            new Ball(150, 200, DIAMETER, new int[]{255, 0, 0}),
-            new Ball(450, 200, DIAMETER, new int[]{255, 0, 0})
+            new Ball(150, 200, RADIUS, new int[]{255, 0, 0}),
+            new Ball(450, 200, RADIUS, new int[]{255, 0, 0})
     };
     private PriorityQueue<Collision> collisions = new PriorityQueue<>();
 
     public Game()
     {
-        balls[0].applyVel(50, 0);
-        for (int i = 0; i < balls.length-1; i++) {
-            for (int j = i+1; j < balls.length; j++) {
-                
+        balls[0].applyVel(50, 50);
+        for (int i = 0; i < balls.length; i++) {
+            if (balls[i].getyVel() > 0) {
+                System.out.println("vel over 0");
+                collisions.add(new WallCollision(
+                        (long)((HEIGHT - RADIUS - balls[i].getyPos()) / balls[i].getyVel() * Math.pow(10, 9)),
+                        i,
+                        false
+                ));
+            } else if (balls[i].getyVel() < 0) {
+                collisions.add(new WallCollision(
+                        (long)((RADIUS - balls[i].getyPos()) / balls[i].getyVel() * Math.pow(10, 9)),
+                        i,
+                        false
+                ));
             }
+        }
+
+        while (true)
+        {
+            Collision c = collisions.poll();
+            System.out.println(c);
+
+            if (c == null)
+                break;
         }
     }
 
     @Override
     public Dimension getPreferredSize()
     {
-        return new Dimension(600,400);
+        return new Dimension(WIDTH,HEIGHT);
     }
 
     @Override
@@ -43,7 +63,7 @@ public class Game extends JPanel
         }
 
         nextFrameTime += TIME_INCREMENT;
-        System.out.println(nextFrameTime-(System.nanoTime()-START_TIME));
+        //System.out.println(nextFrameTime-(System.nanoTime()-START_TIME));
         while (System.nanoTime()-START_TIME < nextFrameTime);
     }
 }

@@ -9,4 +9,14 @@ public class BallCollision extends Collision
         ball2 = b2;
         b2b = true;
     }
+
+    public int getBall1()
+    {
+        return ball1;
+    }
+
+    public int getBall2()
+    {
+        return ball2;
+    }
 }

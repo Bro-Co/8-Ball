@@ -1,7 +1,17 @@
 public class Collision implements Comparable<Collision>
 {
-    public Long when;
-    public boolean b2b;
+    protected Long when;
+    protected boolean b2b;
+
+    public Long getWhen()
+    {
+        return when;
+    }
+
+    public boolean isB2b()
+    {
+        return b2b;
+    }
 
     @Override
     public int compareTo(Collision c) {

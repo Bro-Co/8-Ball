@@ -1,7 +1,7 @@
 public class WallCollision extends Collision
 {
-    public int ball;
-    public boolean sideWall;
+    private int ball;
+    private boolean sideWall;
 
     public WallCollision(long w, int b, boolean sw)
     {
@@ -9,5 +9,21 @@ public class WallCollision extends Collision
         ball = b;
         sideWall = sw;
         b2b = false;
+    }
+
+    public int getBall()
+    {
+        return ball;
+    }
+
+    public boolean isSideWall()
+    {
+        return sideWall;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "[when=" + when + ", ball=" + ball + ", sw=" + sideWall + ", b2b=" + b2b + "]";
     }
 }
