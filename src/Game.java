@@ -4,7 +4,7 @@ import java.util.PriorityQueue;
 
 public class Game extends JPanel
 {
-    private long nextFrameTime = 0;
+    private long nextFrameTime = 0, nextCollisionTime;
     private final int RADIUS = 20, FPS = 60, WIDTH = 600, HEIGHT = 400;
     private final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)Math.pow(10, 9)/FPS;
     private Ball[] balls = {
@@ -50,12 +50,7 @@ public class Game extends JPanel
                 ));
             }
         }
-
-        for (int i = 0; i < balls.length-1; i++) {
-            for (int j = 0; j < balls.length; j++) {
-
-            }
-        }
+        nextCollisionTime = collisions.peek().getWhen();
 
         for (Collision c: collisions)
         {
@@ -66,7 +61,7 @@ public class Game extends JPanel
     @Override
     public Dimension getPreferredSize()
     {
-        return new Dimension(WIDTH,HEIGHT);
+        return new Dimension(WIDTH, HEIGHT);
     }
 
     @Override
@@ -78,10 +73,18 @@ public class Game extends JPanel
         }
         repaint();
 
-        if (nextFrameTime >= collisions.peek().getWhen()) {
-            
+
+        long remainingTime = TIME_INCREMENT;
+        while (nextCollisionTime <= nextFrameTime+TIME_INCREMENT) {
+            System.out.printf("Le collision prediction has arrived\ncurrent time: %d\nnext time: %d\ncollision time: %d\n", nextFrameTime+TIME_INCREMENT-remainingTime, nextFrameTime+TIME_INCREMENT, nextCollisionTime);
+
+            for (Ball b : balls) {
+                b.applyTime(nextCollisionTime-nextFrameTime);
+            }
+            remainingTime -= (nextCollisionTime-nextFrameTime);
+
             if (!collisions.peek().isB2b()) {
-                WallCollision c = (WallCollision) collisions.poll();
+                WallCollision c = (WallCollision) collisions.peek();
                 if (c.getHits() == balls[c.getBall()].getHits()) {
                     if (c.isSideWall()) {
                         balls[c.getBall()].applyVel(-2*balls[c.getBall()].getxVel(), 0);
@@ -91,14 +94,19 @@ public class Game extends JPanel
                     balls[c.getBall()].increaseHits();
                 }
             }
-        } else {
-            for (Ball b : balls) {
-                b.applyTime(TIME_INCREMENT);
+
+            collisions.poll();
+            nextCollisionTime = collisions.peek().getWhen();
+            for (Collision c: collisions)
+            {
+                System.out.println(c);
             }
+        }
+        for (Ball b : balls) {
+            b.applyTime(remainingTime);
         }
 
         nextFrameTime += TIME_INCREMENT;
-        //System.out.println(nextFrameTime-(System.nanoTime()-START_TIME));
         while (System.nanoTime()-START_TIME < nextFrameTime);
     }
 }
