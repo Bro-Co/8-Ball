@@ -4,6 +4,7 @@ public class Ball
 {
     private double xPos, yPos, rad, xVel,  yVel;
     private Color col;
+    private int hits;
 
     public Ball(int x, int y, int r, int[] rgb)
     {
@@ -13,6 +14,7 @@ public class Ball
         xVel = 0;
         yVel = 0;
         col = new Color(rgb[0], rgb[1], rgb[2]);
+        hits = 0;
     }
 
     public double getxPos()
@@ -35,10 +37,20 @@ public class Ball
         return yVel;
     }
 
+    public int getHits()
+    {
+        return hits;
+    }
+
+    public void increaseHits()
+    {
+        hits++;
+    }
+
     public void applyVel(double x, double y)
     {
-        xVel = x;
-        yVel = y;
+        xVel += x;
+        yVel += y;
     }
 
     public void applyTime(long t)

@@ -16,33 +16,37 @@ public class Game extends JPanel
     public Game()
     {
         balls[0].applyVel(50, 50);
+        balls[1].applyVel(-50, -50);
 
         for (int i = 0; i < balls.length; i++) {
-            if (balls[i].getyVel() > 0) {
-                collisions.add(new WallCollision(
-                        (long) ((HEIGHT - RADIUS - balls[i].getyPos()) / balls[i].getyVel() * Math.pow(10, 9)),
-                        i,
-                        false
-                ));
-            } else if (balls[i].getyVel() < 0) {
-                collisions.add(new WallCollision(
-                        (long) ((RADIUS - balls[i].getyPos()) / balls[i].getyVel() * Math.pow(10, 9)),
-                        i,
-                        false
-                ));
-            }
-
             if (balls[i].getxVel() > 0) {
                 collisions.add(new WallCollision(
                         (long) ((WIDTH - RADIUS - balls[i].getxPos()) / balls[i].getxVel() * Math.pow(10, 9)),
                         i,
-                        true
+                        true,
+                        balls[i].getHits()
                 ));
             } else if (balls[i].getxVel() < 0) {
                 collisions.add(new WallCollision(
                         (long) ((RADIUS - balls[i].getxPos()) / balls[i].getxVel() * Math.pow(10, 9)),
                         i,
-                        true
+                        true,
+                        balls[i].getHits()
+                ));
+            }
+            if (balls[i].getyVel() > 0) {
+                collisions.add(new WallCollision(
+                        (long) ((HEIGHT - RADIUS - balls[i].getyPos()) / balls[i].getyVel() * Math.pow(10, 9)),
+                        i,
+                        false,
+                        balls[i].getHits()
+                ));
+            } else if (balls[i].getyVel() < 0) {
+                collisions.add(new WallCollision(
+                        (long) ((RADIUS - balls[i].getyPos()) / balls[i].getyVel() * Math.pow(10, 9)),
+                        i,
+                        false,
+                        balls[i].getHits()
                 ));
             }
         }
@@ -53,14 +57,9 @@ public class Game extends JPanel
             }
         }
 
-
-        while (true)
+        for (Collision c: collisions)
         {
-            Collision c = collisions.poll();
             System.out.println(c);
-
-            if (c == null)
-                break;
         }
     }
 
@@ -79,8 +78,23 @@ public class Game extends JPanel
         }
         repaint();
 
-        for (Ball b: balls) {
-            b.applyTime(TIME_INCREMENT);
+        if (nextFrameTime >= collisions.peek().getWhen()) {
+            
+            if (!collisions.peek().isB2b()) {
+                WallCollision c = (WallCollision) collisions.poll();
+                if (c.getHits() == balls[c.getBall()].getHits()) {
+                    if (c.isSideWall()) {
+                        balls[c.getBall()].applyVel(-2*balls[c.getBall()].getxVel(), 0);
+                    } else {
+                        balls[c.getBall()].applyVel(0, -2*balls[c.getBall()].getyVel());
+                    }
+                    balls[c.getBall()].increaseHits();
+                }
+            }
+        } else {
+            for (Ball b : balls) {
+                b.applyTime(TIME_INCREMENT);
+            }
         }
 
         nextFrameTime += TIME_INCREMENT;
