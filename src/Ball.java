@@ -6,7 +6,7 @@ public class Ball
     private Color col;
     private int hits;
 
-    public Ball(int x, int y, int r, int[] rgb)
+    public Ball(double x, double y, double r, int[] rgb)
     {
         xPos = x;
         yPos = y;

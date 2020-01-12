@@ -21,10 +21,4 @@ public class WallCollision extends Collision
     {
         return sideWall;
     }
-
-    @Override
-    public String toString()
-    {
-        return "[when=" + when + ", ball=" + ball + ", sw=" + sideWall + ", b2b=" + b2b + "]";
-    }
 }

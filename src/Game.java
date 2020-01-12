@@ -4,64 +4,28 @@ import java.util.PriorityQueue;
 
 public class Game extends JPanel
 {
-    private long nextFrameTime = 0, nextCollisionTime;
-    private final int RADIUS = 20, FPS = 60, WIDTH = 600, HEIGHT = 400;
-    private final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)Math.pow(10, 9)/FPS;
+    private long nextFrameTime = 0, nextCollisionTime = 0;
+    private final double RADIUS = 10, FPS = 60, WIDTH = 100, HEIGHT = 100;
+    private final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)(Math.pow(10, 9)/FPS);
     private Ball[] balls = {
-            new Ball(200, 200, RADIUS, new int[]{255, 0, 0}),
-            new Ball(400, 200, RADIUS, new int[]{255, 0, 0})
+            new Ball(50, 50, RADIUS, new int[]{255, 0, 0})
     };
     private PriorityQueue<Collision> collisions = new PriorityQueue<>();
 
     public Game()
     {
-        balls[0].applyVel(50, 50);
-        balls[1].applyVel(-50, -50);
+        balls[0].applyVel(50, 25);
 
         for (int i = 0; i < balls.length; i++) {
-            if (balls[i].getxVel() > 0) {
-                collisions.add(new WallCollision(
-                        (long) ((WIDTH - RADIUS - balls[i].getxPos()) / balls[i].getxVel() * Math.pow(10, 9)),
-                        i,
-                        true,
-                        balls[i].getHits()
-                ));
-            } else if (balls[i].getxVel() < 0) {
-                collisions.add(new WallCollision(
-                        (long) ((RADIUS - balls[i].getxPos()) / balls[i].getxVel() * Math.pow(10, 9)),
-                        i,
-                        true,
-                        balls[i].getHits()
-                ));
-            }
-            if (balls[i].getyVel() > 0) {
-                collisions.add(new WallCollision(
-                        (long) ((HEIGHT - RADIUS - balls[i].getyPos()) / balls[i].getyVel() * Math.pow(10, 9)),
-                        i,
-                        false,
-                        balls[i].getHits()
-                ));
-            } else if (balls[i].getyVel() < 0) {
-                collisions.add(new WallCollision(
-                        (long) ((RADIUS - balls[i].getyPos()) / balls[i].getyVel() * Math.pow(10, 9)),
-                        i,
-                        false,
-                        balls[i].getHits()
-                ));
-            }
+            scheduleCollisions(i);
         }
         nextCollisionTime = collisions.peek().getWhen();
-
-        for (Collision c: collisions)
-        {
-            System.out.println(c);
-        }
     }
 
     @Override
     public Dimension getPreferredSize()
     {
-        return new Dimension(WIDTH, HEIGHT);
+        return new Dimension((int)Math.round(WIDTH), (int)Math.round(HEIGHT));
     }
 
     @Override
@@ -76,8 +40,6 @@ public class Game extends JPanel
 
         long remainingTime = TIME_INCREMENT;
         while (nextCollisionTime <= nextFrameTime+TIME_INCREMENT) {
-            System.out.printf("Le collision prediction has arrived\ncurrent time: %d\nnext time: %d\ncollision time: %d\n", nextFrameTime+TIME_INCREMENT-remainingTime, nextFrameTime+TIME_INCREMENT, nextCollisionTime);
-
             for (Ball b : balls) {
                 b.applyTime(nextCollisionTime-nextFrameTime);
             }
@@ -92,15 +54,12 @@ public class Game extends JPanel
                         balls[c.getBall()].applyVel(0, -2*balls[c.getBall()].getyVel());
                     }
                     balls[c.getBall()].increaseHits();
+                    scheduleCollisions(c.getBall());
                 }
             }
 
             collisions.poll();
             nextCollisionTime = collisions.peek().getWhen();
-            for (Collision c: collisions)
-            {
-                System.out.println(c);
-            }
         }
         for (Ball b : balls) {
             b.applyTime(remainingTime);
@@ -108,5 +67,46 @@ public class Game extends JPanel
 
         nextFrameTime += TIME_INCREMENT;
         while (System.nanoTime()-START_TIME < nextFrameTime);
+    }
+
+    public void scheduleCollisions(int b)
+    {
+        if (balls[b].getxVel() > 0) {
+            collisions.add(new WallCollision(
+                    nextCollisionTime + Math.round((WIDTH - RADIUS - balls[b].getxPos()) / balls[b].getxVel() * Math.pow(10, 9)),
+                    b,
+                    true,
+                    balls[b].getHits()
+            ));
+            System.out.printf("right side: %d + ((%f - %f - %f) / %f * %f) = %d\n", nextCollisionTime, WIDTH, RADIUS, balls[b].getxPos(), balls[b].getxVel(), Math.pow(10, 9), nextCollisionTime + Math.round((WIDTH - RADIUS - balls[b].getxPos()) / balls[b].getxVel() * Math.pow(10, 9)));
+        } else if (balls[b].getxVel() < 0) {
+            collisions.add(new WallCollision(
+                    nextCollisionTime + Math.round((RADIUS - balls[b].getxPos()) / balls[b].getxVel() * Math.pow(10, 9)),
+                    b,
+                    true,
+                    balls[b].getHits()
+            ));
+            System.out.printf("left side: %d + ((%f - %f) / %f * %f) = %d\n", nextCollisionTime, RADIUS, balls[b].getxPos(), balls[b].getxVel(), Math.pow(10, 9), nextCollisionTime + Math.round((RADIUS - balls[b].getxPos()) / balls[b].getxVel() * Math.pow(10, 9)));
+        }
+
+        if (balls[b].getyVel() > 0) {
+            collisions.add(new WallCollision(
+                    nextCollisionTime + Math.round((HEIGHT - RADIUS - balls[b].getyPos()) / balls[b].getyVel() * Math.pow(10, 9)),
+                    b,
+                    false,
+                    balls[b].getHits()
+            ));
+            System.out.printf("bottom: %d + ((%f - %f - %f) / %f * %f) = %d\n", nextCollisionTime, HEIGHT, RADIUS, balls[b].getyPos(), balls[b].getyVel(), Math.pow(10, 9), nextCollisionTime + Math.round((HEIGHT - RADIUS - balls[b].getyPos()) / balls[b].getyVel() * Math.pow(10, 9)));
+        } else if (balls[b].getyVel() < 0) {
+            collisions.add(new WallCollision(
+                    nextCollisionTime + Math.round((RADIUS - balls[b].getyPos()) / balls[b].getyVel() * Math.pow(10, 9)),
+                    b,
+                    false,
+                    balls[b].getHits()
+            ));
+            System.out.printf("top: %d + ((%f - %f) / %f * %f) = %d\n", nextCollisionTime, RADIUS, balls[b].getyPos(), balls[b].getyVel(), Math.pow(10, 9), nextCollisionTime + Math.round((RADIUS - balls[b].getyPos()) / balls[b].getyVel() * Math.pow(10, 9)));
+        }
+
+        System.out.println();
     }
 }
