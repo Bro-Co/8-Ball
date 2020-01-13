@@ -2,7 +2,7 @@ import java.awt.*;
 
 public class Ball
 {
-    private double xPos, yPos, rad, xVel,  yVel;
+    private double xPos, yPos, xVel,  yVel, rad;
     private Color col;
     private int hits;
 
