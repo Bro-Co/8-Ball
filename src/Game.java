@@ -5,10 +5,10 @@ import java.util.PriorityQueue;
 public class Game extends JPanel
 {
     private long currentTime = 0, nextCollisionTime = 0;
-    private final double RADIUS = 20, FPS = 60, WIDTH = 600, HEIGHT = 400;
+    private final double RADIUS = 10, FPS = 60, WIDTH = 100, HEIGHT = 100;
     private final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)(Math.pow(10, 9)/FPS);
     private Ball[] balls = {
-            new Ball(300, 200, RADIUS, new int[]{255, 0, 0})
+            new Ball(50, 50, RADIUS, new int[]{255, 0, 0})
     };
     private PriorityQueue<Collision> collisions = new PriorityQueue<>();
 
