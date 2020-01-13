@@ -4,17 +4,17 @@ import java.util.PriorityQueue;
 
 public class Game extends JPanel
 {
-    private long currentTime = 0, nextCollisionTime = 0;
-    private final double RADIUS = 10, FPS = 60, WIDTH = 100, HEIGHT = 100;
+    private long currentTime = 0, nextCollisionTime;
+    private final double RADIUS = 50, FPS = 60, WIDTH = 1000, HEIGHT = 500;
     private final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)(Math.pow(10, 9)/FPS);
     private Ball[] balls = {
-            new Ball(50, 50, RADIUS, new int[]{255, 0, 0})
+            new Ball(500, 250, RADIUS, new int[]{255, 0, 0})
     };
     private PriorityQueue<Collision> collisions = new PriorityQueue<>();
 
     public Game()
     {
-        balls[0].applyVel(100, 50);
+        balls[0].applyVel(500, 250);
 
         for (int i = 0; i < balls.length; i++) {
             scheduleCollisions(i);
