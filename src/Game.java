@@ -5,7 +5,7 @@ import java.util.PriorityQueue;
 public class Game extends JPanel
 {
     private long currentTime = 0, nextCollisionTime;
-    private final double RADIUS = 50, FPS = 60, WIDTH = 1000, HEIGHT = 500;
+    private final double RADIUS = 50, FPS = 50, WIDTH = 1000, HEIGHT = 500;
     private final long START_TIME = System.nanoTime(), TIME_INCREMENT = (long)(Math.pow(10, 9)/FPS);
     private Ball[] balls = {
             new Ball(250, 250, RADIUS, new int[]{255, 0, 0}),
@@ -15,7 +15,7 @@ public class Game extends JPanel
 
     public Game()
     {
-        balls[0].applyVel(250, 0);
+        balls[0].applyVel(250, 25);
 
         for (int i = 0; i < balls.length; i++) {
             scheduleCollisions(i);
@@ -38,7 +38,6 @@ public class Game extends JPanel
         }
         repaint();
 
-
         long remainingTime = TIME_INCREMENT;
         while (nextCollisionTime <= currentTime+remainingTime) {
             for (Ball b : balls) {
@@ -48,9 +47,27 @@ public class Game extends JPanel
             currentTime = nextCollisionTime;
 
             if (collisions.peek().isB2b()) {
-                System.out.println("hell yeah");
+                BallCollision c = (BallCollision) collisions.poll();
+                if (c.getHits() == balls[c.getBall1()].getHits() + balls[c.getBall2()].getHits()) {
+                    double
+                            rx = balls[c.getBall2()].getxPos()-balls[c.getBall1()].getxPos(),
+                            ry = balls[c.getBall2()].getyPos()-balls[c.getBall1()].getyPos(),
+                            vx = balls[c.getBall2()].getxVel()-balls[c.getBall1()].getxVel(),
+                            vy = balls[c.getBall2()].getyVel()-balls[c.getBall1()].getyVel(),
+                            vr = dot(vx, vy, rx, ry),
+                            j = vr / (2 * RADIUS),
+                            jx = j * rx / (2 * RADIUS),
+                            jy = j * ry / (2 * RADIUS);
+
+                    balls[c.getBall1()].applyVel(jx, jy);
+                    balls[c.getBall2()].applyVel(-jx, -jy);
+                    balls[c.getBall1()].increaseHits();
+                    balls[c.getBall2()].increaseHits();
+                    scheduleCollisions(c.getBall1());
+                    scheduleCollisions(c.getBall2());
+                }
             } else {
-                WallCollision c = (WallCollision) collisions.peek();
+                WallCollision c = (WallCollision) collisions.poll();
                 if (c.getHits() == balls[c.getBall()].getHits()) {
                     if (c.isSideWall()) {
                         balls[c.getBall()].applyVel(-2*balls[c.getBall()].getxVel(), 0);
@@ -61,14 +78,13 @@ public class Game extends JPanel
                     scheduleCollisions(c.getBall());
                 }
             }
-
-            collisions.poll();
             nextCollisionTime = collisions.peek().getWhen();
         }
 
         for (Ball b : balls) {
             b.applyTime(remainingTime);
         }
+
         currentTime += remainingTime;
         while (System.nanoTime()-START_TIME < currentTime);
     }
@@ -109,10 +125,10 @@ public class Game extends JPanel
 
         for (int b2 = 0; b2 < balls.length; b2++) {
             double
-                    rx = balls[b].getxPos()-balls[b2].getxPos(),
-                    ry = balls[b].getyPos()-balls[b2].getyPos(),
-                    vx = balls[b].getxVel()-balls[b2].getxVel(),
-                    vy = balls[b].getyVel()-balls[b2].getyVel(),
+                    rx = balls[b2].getxPos()-balls[b].getxPos(),
+                    ry = balls[b2].getyPos()-balls[b].getyPos(),
+                    vx = balls[b2].getxVel()-balls[b].getxVel(),
+                    vy = balls[b2].getyVel()-balls[b].getyVel(),
                     rr = dot(rx, ry, rx, ry),
                     vv = dot(vx, vy, vx, vy),
                     vr = dot(vx, vy, rx, ry),
@@ -125,7 +141,6 @@ public class Game extends JPanel
                         b2,
                         balls[b].getHits()+balls[b2].getHits()
                 ));
-                System.out.printf("Balls %d and %d will collide at %d\n", b, b2, currentTime + Math.round(- (vr + Math.sqrt(d)) / vv * Math.pow(10, 9)));
             }
         }
     }
