@@ -14,9 +14,9 @@ public class Collision implements Comparable<Collision>
         return b2b;
     }
 
-    public int getHits()
+    public boolean isValid()
     {
-        return hits;
+        return true;
     }
 
     @Override

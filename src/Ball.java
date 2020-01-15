@@ -2,39 +2,39 @@ import java.awt.*;
 
 public class Ball
 {
-    private double xPos, yPos, xVel,  yVel, rad;
-    private Color col;
+    private Vector position, velocity;
+    private double radius, mass;
+    private Color color;
     private int hits;
 
-    public Ball(double x, double y, double r, int[] rgb)
+    public Ball(double rx, double ry, double vx, double vy, double rad, int r, int g, int b)
     {
-        xPos = x;
-        yPos = y;
-        rad = r;
-        xVel = 0;
-        yVel = 0;
-        col = new Color(rgb[0], rgb[1], rgb[2]);
+        position = new Vector(rx, ry);
+        velocity = new Vector(vx, vy);
+        radius = rad;
+        mass = Math.PI * Math.pow(rad, 2);
+        color = new Color(r, g, b);
         hits = 0;
     }
 
-    public double getxPos()
+    public Vector getPos()
     {
-        return xPos;
+        return position;
     }
 
-    public double getyPos()
+    public Vector getVel()
     {
-        return yPos;
+        return velocity;
     }
 
-    public double getxVel()
+    public double getRadius()
     {
-        return xVel;
+        return radius;
     }
 
-    public double getyVel()
+    public double getMass()
     {
-        return yVel;
+        return mass;
     }
 
     public int getHits()
@@ -47,26 +47,40 @@ public class Ball
         hits++;
     }
 
-    public void applyVel(double x, double y)
+    public void applyVel(Vector v)
     {
-        xVel += x;
-        yVel += y;
+        velocity = velocity.add(v);
+        if (Math.abs(velocity.x) < 0.01) {
+            velocity.x = 0;
+        }
+        if (Math.abs(velocity.y) < 0.01) {
+            velocity.y = 0;
+        }
+    }
+
+    public void reflectX()
+    {
+        velocity.x = -velocity.x;
+    }
+
+    public void reflectY()
+    {
+        velocity.y = -velocity.y;
     }
 
     public void applyTime(long t)
     {
-        xPos += xVel*t/Math.pow(10, 9);
-        yPos += yVel*t/Math.pow(10, 9);
+        position = position.add(velocity.scale(t / Math.pow(10, 9)));
     }
 
     public void displayBall(Graphics g)
     {
-        g.setColor(col);
+        g.setColor(color);
         g.fillOval(
-                (int)Math.round(xPos-rad),
-                (int)Math.round(yPos-rad),
-                (int)Math.round(rad*2),
-                (int)Math.round(rad*2)
+                (int) Math.round(position.x - radius),
+                (int) Math.round(position.y - radius),
+                (int) Math.round(radius * 2),
+                (int) Math.round(radius * 2)
         );
     }
 }

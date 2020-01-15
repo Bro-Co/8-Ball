@@ -1,23 +1,29 @@
 public class BallCollision extends Collision
 {
-    public int ball1, ball2;
+    public Ball ball1, ball2;
 
-    public BallCollision(long w, int b1, int b2, int h)
+    public BallCollision(long w, Ball b1, Ball b2, int h)
     {
         when = w;
         ball1 = b1;
         ball2 = b2;
-        b2b = true;
         hits = h;
+        b2b = true;
     }
 
-    public int getBall1()
+    public Ball getBall1()
     {
         return ball1;
     }
 
-    public int getBall2()
+    public Ball getBall2()
     {
         return ball2;
+    }
+
+    @Override
+    public boolean isValid()
+    {
+        return hits == ball1.getHits() + ball2.getHits();
     }
 }

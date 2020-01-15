@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class Window
 {
@@ -10,7 +9,7 @@ public class Window
 
     private static void playGame()
     {
-        JFrame jf = new JFrame("Billiards");
+        JFrame jf = new JFrame("Particle Collision Engine");
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf.add(new Game());
         jf.pack();

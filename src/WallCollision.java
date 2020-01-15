@@ -1,18 +1,18 @@
 public class WallCollision extends Collision
 {
-    private int ball;
+    private Ball ball;
     private boolean sideWall;
 
-    public WallCollision(long w, int b, boolean sw, int h)
+    public WallCollision(long w, Ball b, boolean sw, int h)
     {
         when = w;
         ball = b;
         sideWall = sw;
-        b2b = false;
         hits = h;
+        b2b = false;
     }
 
-    public int getBall()
+    public Ball getBall()
     {
         return ball;
     }
@@ -20,5 +20,11 @@ public class WallCollision extends Collision
     public boolean isSideWall()
     {
         return sideWall;
+    }
+
+    @Override
+    public boolean isValid()
+    {
+        return hits == ball.getHits();
     }
 }
