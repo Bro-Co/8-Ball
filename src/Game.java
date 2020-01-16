@@ -46,11 +46,15 @@ public class Game extends JPanel
     @Override
     public void paintComponent(Graphics g)
     {
+        long one = System.nanoTime();
+
         super.paintComponent(g);
         for (Ball b : balls) {
             b.displayBall(g);
         }
         repaint();
+
+        long two = System.nanoTime();
 
         long remainingTime = TIME_INCREMENT;
         while (nextCollisionTime <= currentTime + remainingTime) {
@@ -71,16 +75,21 @@ public class Game extends JPanel
             nextCollisionTime = collisions.peek().getWhen();
         }
 
+        long three = System.nanoTime();
+
         for (Ball b : balls) {
             b.applyTime(remainingTime);
         }
-
         currentTime += remainingTime;
+
         int percent = (int) ((currentTime - (System.nanoTime() - START_TIME)) / Math.pow(10, 7) * FPS);
         for (int i = 0; i < 100; i++) {
             System.out.print(i <= percent ? "#" : ".");
         }
-        System.out.println();
+
+        long four = System.nanoTime();
+
+        System.out.printf(" %d %d %d\n", two - one, three - two, four - three);
         while (System.nanoTime() - START_TIME < currentTime);
     }
 
@@ -89,32 +98,28 @@ public class Game extends JPanel
         if (b.getVel().x > 0) {
             collisions.add(new WallCollision(
                     currentTime + Math.round((WIDTH - b.getRadius() - b.getPos().x) / b.getVel().x * Math.pow(10, 9)),
-                    b,
-                    true,
-                    b.getHits()
+                    new Ball[] {b},
+                    true
             ));
         } else if (b.getVel().x < 0) {
             collisions.add(new WallCollision(
                     currentTime + Math.round((b.getRadius() - b.getPos().x) / b.getVel().x * Math.pow(10, 9)),
-                    b,
-                    true,
-                    b.getHits()
+                    new Ball[] {b},
+                    true
             ));
         }
 
         if (b.getVel().y > 0) {
             collisions.add(new WallCollision(
                     currentTime + Math.round((HEIGHT - b.getRadius() - b.getPos().y) / b.getVel().y * Math.pow(10, 9)),
-                    b,
-                    false,
-                    b.getHits()
+                    new Ball[] {b},
+                    false
             ));
         } else if (b.getVel().y < 0) {
             collisions.add(new WallCollision(
                     currentTime + Math.round((b.getRadius() - b.getPos().y) / b.getVel().y * Math.pow(10, 9)),
-                    b,
-                    false,
-                    b.getHits()
+                    new Ball[] {b},
+                    false
             ));
         }
 
@@ -129,9 +134,7 @@ public class Game extends JPanel
             if (position.dot(velocity) < 0 && discriminant >= 0) {
                 collisions.add(new BallCollision(
                         currentTime + Math.round(- (position.dot(velocity) + Math.sqrt(discriminant)) / velocity.dot(velocity) * Math.pow(10, 9)),
-                        b,
-                        b2,
-                        b.getHits() + b2.getHits()
+                        new Ball[] {b, b2}
                 ));
             }
         }

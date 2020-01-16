@@ -59,12 +59,6 @@ public class Ball
     public void applyVel(Vector v)
     {
         velocity = velocity.add(v);
-        if (Math.abs(velocity.x) < 0.01) {
-            velocity.x = 0;
-        }
-        if (Math.abs(velocity.y) < 0.01) {
-            velocity.y = 0;
-        }
     }
 
     public void applyTime(long t)

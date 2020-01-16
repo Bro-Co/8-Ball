@@ -2,18 +2,12 @@ public class WallCollision extends Collision
 {
     private boolean sideWall;
 
-    public WallCollision(long w, Ball b, boolean sw, int h)
+    public WallCollision(long w, Ball[] bs, boolean sw)
     {
         when = w;
-        balls = new Ball[]{b};
+        balls = bs;
         sideWall = sw;
-        hits = h;
-    }
-
-    @Override
-    public boolean isValid()
-    {
-        return hits == balls[0].getHits();
+        hits = calculateHits();
     }
 
     @Override

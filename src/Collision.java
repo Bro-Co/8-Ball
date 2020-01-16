@@ -14,9 +14,18 @@ public class Collision implements Comparable<Collision>
         return balls;
     }
 
+    public int calculateHits()
+    {
+        int sum = 0;
+        for (Ball b : balls) {
+            sum += b.getHits();
+        }
+        return sum;
+    }
+
     public boolean isValid()
     {
-        return true;
+        return calculateHits() == hits;
     }
 
     public void handleCollision() { }
