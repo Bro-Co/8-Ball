@@ -1,7 +1,7 @@
 public class Collision implements Comparable<Collision>
 {
     protected Long when;
-    protected boolean b2b;
+    protected Ball[] balls;
     protected int hits;
 
     public Long getWhen()
@@ -9,15 +9,17 @@ public class Collision implements Comparable<Collision>
         return when;
     }
 
-    public boolean isB2b()
+    public Ball[] getBalls()
     {
-        return b2b;
+        return balls;
     }
 
     public boolean isValid()
     {
         return true;
     }
+
+    public void handleCollision() { }
 
     @Override
     public int compareTo(Collision c) {

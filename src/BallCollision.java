@@ -1,29 +1,33 @@
 public class BallCollision extends Collision
 {
-    public Ball ball1, ball2;
-
     public BallCollision(long w, Ball b1, Ball b2, int h)
     {
         when = w;
-        ball1 = b1;
-        ball2 = b2;
+        balls = new Ball[]{b1, b2};
         hits = h;
-        b2b = true;
-    }
-
-    public Ball getBall1()
-    {
-        return ball1;
-    }
-
-    public Ball getBall2()
-    {
-        return ball2;
     }
 
     @Override
     public boolean isValid()
     {
-        return hits == ball1.getHits() + ball2.getHits();
+        return hits == (balls[0].getHits() + balls[1].getHits());
+    }
+
+    @Override
+    public void handleCollision()
+    {
+        Vector
+                position = balls[1].getPos().sub(balls[0].getPos()),
+                velocity = balls[1].getVel().sub(balls[0].getVel());
+        double
+                dist = balls[0].getRadius() + balls[1].getRadius(),
+                power = 2 * balls[0].getMass() * balls[1].getMass() * position.dot(velocity) / (dist * (balls[0].getMass() + balls[1].getMass()));
+        Vector
+                impulse = position.scaleUp(power / dist);
+
+        balls[0].applyVel(impulse.scaleDown(balls[0].getMass()));
+        balls[1].applyVel(impulse.scaleDown(- balls[1].getMass()));
+        balls[0].increaseHits();
+        balls[1].increaseHits();
     }
 }

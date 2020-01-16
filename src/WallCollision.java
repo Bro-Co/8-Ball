@@ -1,30 +1,29 @@
 public class WallCollision extends Collision
 {
-    private Ball ball;
     private boolean sideWall;
 
     public WallCollision(long w, Ball b, boolean sw, int h)
     {
         when = w;
-        ball = b;
+        balls = new Ball[]{b};
         sideWall = sw;
         hits = h;
-        b2b = false;
-    }
-
-    public Ball getBall()
-    {
-        return ball;
-    }
-
-    public boolean isSideWall()
-    {
-        return sideWall;
     }
 
     @Override
     public boolean isValid()
     {
-        return hits == ball.getHits();
+        return hits == balls[0].getHits();
+    }
+
+    @Override
+    public void handleCollision()
+    {
+        if (sideWall) {
+            balls[0].reflectX();
+        } else {
+            balls[0].reflectY();
+        }
+        balls[0].increaseHits();
     }
 }

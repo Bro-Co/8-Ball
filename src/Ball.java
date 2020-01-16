@@ -5,7 +5,7 @@ public class Ball
     private Vector position, velocity;
     private double radius, mass;
     private Color color;
-    private int hits;
+    private int hits = 0;
 
     public Ball(double rx, double ry, double vx, double vy, double rad, int r, int g, int b)
     {
@@ -14,7 +14,6 @@ public class Ball
         radius = rad;
         mass = Math.PI * Math.pow(rad, 2);
         color = new Color(r, g, b);
-        hits = 0;
     }
 
     public Vector getPos()
@@ -47,6 +46,16 @@ public class Ball
         hits++;
     }
 
+    public void reflectX()
+    {
+        velocity.x = - velocity.x;
+    }
+
+    public void reflectY()
+    {
+        velocity.y = - velocity.y;
+    }
+
     public void applyVel(Vector v)
     {
         velocity = velocity.add(v);
@@ -58,19 +67,9 @@ public class Ball
         }
     }
 
-    public void reflectX()
-    {
-        velocity.x = -velocity.x;
-    }
-
-    public void reflectY()
-    {
-        velocity.y = -velocity.y;
-    }
-
     public void applyTime(long t)
     {
-        position = position.add(velocity.scale(t / Math.pow(10, 9)));
+        position = position.add(velocity.scaleUp(t / Math.pow(10, 9)));
     }
 
     public void displayBall(Graphics g)

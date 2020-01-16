@@ -18,9 +18,14 @@ public class Vector
         return new Vector(x - v.x, y - v.y);
     }
 
-    public Vector scale(double s)
+    public Vector scaleUp(double s)
     {
         return new Vector(x * s, y * s);
+    }
+
+    public Vector scaleDown(double s)
+    {
+        return new Vector(x / s, y / s);
     }
 
     public double dot(Vector v)
