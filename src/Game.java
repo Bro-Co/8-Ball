@@ -46,15 +46,12 @@ public class Game extends JPanel
     @Override
     public void paintComponent(Graphics g)
     {
-        long one = System.nanoTime();
-
         super.paintComponent(g);
         for (Ball b : balls) {
             b.displayBall(g);
         }
-        repaint();
 
-        long two = System.nanoTime();
+        repaint();
 
         long remainingTime = TIME_INCREMENT;
         while (nextCollisionTime <= currentTime + remainingTime) {
@@ -74,9 +71,6 @@ public class Game extends JPanel
             }
             nextCollisionTime = collisions.peek().getWhen();
         }
-
-        long three = System.nanoTime();
-
         for (Ball b : balls) {
             b.applyTime(remainingTime);
         }
@@ -86,10 +80,7 @@ public class Game extends JPanel
         for (int i = 0; i < 100; i++) {
             System.out.print(i <= percent ? "#" : ".");
         }
-
-        long four = System.nanoTime();
-
-        System.out.printf(" %d %d %d\n", two - one, three - two, four - three);
+        System.out.println();
         while (System.nanoTime() - START_TIME < currentTime);
     }
 
