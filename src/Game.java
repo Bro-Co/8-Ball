@@ -1,35 +1,21 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Game extends JPanel
 {
     private long currentTime = 0, nextCollisionTime;
-    private final int FPS = 50, WIDTH = 500, HEIGHT = 500, GRID = 20;
+    private final int FPS = 50, WIDTH = 600, HEIGHT = 400;
     private final long START_TIME, TIME_INCREMENT = (long) Math.pow(10, 9) / FPS;
-    private Ball[] balls = new Ball[(int) Math.pow(GRID, 2)];
+    private Ball[] balls = {
+            new Ball(200, 200, 100, 0, 25, 255, 0, 0),
+            new Ball(400, 175, 0, 0, 25, 0, 0, 0),
+            new Ball(400, 225, 0, 0, 25, 0, 0, 0)
+    };
     private PriorityQueue<Collision> collisions = new PriorityQueue<>();
 
     public Game()
     {
-        final double X_INCREMENT = (double) WIDTH / GRID, Y_INCREMENT = (double) HEIGHT / GRID;
-        int i = 0;
-        for (double x = X_INCREMENT / 2; x <= WIDTH - X_INCREMENT/2; x += X_INCREMENT) {
-            for (double y = Y_INCREMENT / 2; y <= HEIGHT - Y_INCREMENT/2; y += Y_INCREMENT) {
-                balls[i] = new Ball(
-                        x,
-                        y,
-                        (Math.random() - 0.5) * 200,
-                        (Math.random() - 0.5) * 200,
-                        (Math.random()) * 9 + 2,
-                        (int) (Math.random() * 255),
-                        (int) (Math.random() * 255),
-                        (int) (Math.random() * 255)
-                );
-                i++;
-            }
-        }
-
         START_TIME = System.nanoTime();
         for (Ball b : balls) {
             scheduleCollisions(b);
@@ -71,16 +57,11 @@ public class Game extends JPanel
             }
             nextCollisionTime = collisions.peek().getWhen();
         }
+
         for (Ball b : balls) {
             b.applyTime(remainingTime);
         }
         currentTime += remainingTime;
-
-        int percent = (int) ((currentTime - (System.nanoTime() - START_TIME)) / Math.pow(10, 7) * FPS);
-        for (int i = 0; i < 100; i++) {
-            System.out.print(i <= percent ? "#" : ".");
-        }
-        System.out.println();
         while (System.nanoTime() - START_TIME < currentTime);
     }
 
@@ -114,6 +95,8 @@ public class Game extends JPanel
             ));
         }
 
+        LinkedList<Long> collisionTimes = new LinkedList<>();
+        LinkedList<ArrayList<Ball>> ballsInvolved = new LinkedList<>();
         for (Ball b2 : balls) {
             Vector
                     position = b2.getPos().sub(b.getPos()),
@@ -123,11 +106,24 @@ public class Game extends JPanel
                     discriminant = Math.pow(position.dot(velocity), 2) - velocity.dot(velocity) * (position.dot(position) - Math.pow(dist, 2));
 
             if (position.dot(velocity) < 0 && discriminant >= 0) {
-                collisions.add(new BallCollision(
-                        currentTime + Math.round(- (position.dot(velocity) + Math.sqrt(discriminant)) / velocity.dot(velocity) * Math.pow(10, 9)),
-                        new Ball[] {b, b2}
-                ));
+                long t = currentTime + Math.round(- (position.dot(velocity) + Math.sqrt(discriminant)) / velocity.dot(velocity) * Math.pow(10, 9));
+                int p = Collections.binarySearch(collisionTimes, t);
+                if (p < 0) {
+                    collisionTimes.add(- p - 1, t);
+                    ballsInvolved.add(- p - 1, new ArrayList<>());
+                    ballsInvolved.get(- p - 1).add(b);
+                    ballsInvolved.get(- p - 1).add(b2);
+                } else {
+                    ballsInvolved.get(p).add(b2);
+                }
             }
+        }
+
+        for (int i = 0; i < collisionTimes.size(); i++) {
+            collisions.add(new BallCollision(
+                    collisionTimes.get(i),
+                    ballsInvolved.get(i).toArray(new Ball[ballsInvolved.get(i).size()])
+            ));
         }
     }
 }
