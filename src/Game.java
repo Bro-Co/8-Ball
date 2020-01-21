@@ -1,40 +1,29 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.PriorityQueue;
+import java.awt.event.*;
+import java.util.*;
 
 public class Game extends JPanel
 {
     private long currentTime = 0, nextCollisionTime;
     private final int FPS = 50, WIDTH = 500, HEIGHT = 500, GRID = 20;
     private final long START_TIME, TIME_INCREMENT = (long) Math.pow(10, 9) / FPS;
-    private Ball[] balls = new Ball[(int) Math.pow(GRID, 2)];
+    private ArrayList<Ball> balls = new ArrayList<>();
     private PriorityQueue<Collision> collisions = new PriorityQueue<>();
 
     public Game()
     {
-        final double X_INCREMENT = (double) WIDTH / GRID, Y_INCREMENT = (double) HEIGHT / GRID;
-        int i = 0;
-        for (double x = X_INCREMENT / 2; x <= WIDTH - X_INCREMENT/2; x += X_INCREMENT) {
-            for (double y = Y_INCREMENT / 2; y <= HEIGHT - Y_INCREMENT/2; y += Y_INCREMENT) {
-                balls[i] = new Ball(
-                        x,
-                        y,
-                        (Math.random() - 0.5) * 200,
-                        (Math.random() - 0.5) * 200,
-                        (Math.random()) * 9 + 2,
-                        (int) (Math.random() * 255),
-                        (int) (Math.random() * 255),
-                        (int) (Math.random() * 255)
-                );
-                i++;
+        addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                if (!removeBall(e.getX(), e.getY())) {
+                    addBall(e.getX(), e.getY());
+                }
             }
-        }
+        });
 
-        START_TIME = System.nanoTime();
-        for (Ball b : balls) {
-            scheduleCollisions(b);
-        }
+        collisions.add(new Collision());
         nextCollisionTime = collisions.peek().getWhen();
+        START_TIME = System.nanoTime();
     }
 
     @Override
@@ -84,6 +73,33 @@ public class Game extends JPanel
         while (System.nanoTime() - START_TIME < currentTime);
     }
 
+    public void addBall(double x, double y)
+    {
+        balls.add(new Ball(
+                x,
+                y,
+                (Math.random() - 0.5) * 200,
+                (Math.random() - 0.5) * 200,
+                (Math.random()) * 15 + 5,
+                (int) (Math.random() * 255),
+                (int) (Math.random() * 255),
+                (int) (Math.random() * 255)
+        ));
+        scheduleCollisions(balls.get(balls.size() - 1));
+        nextCollisionTime = collisions.peek().getWhen();
+    }
+
+    public boolean removeBall(double x, double y)
+    {
+        for (Ball b : balls) {
+            if (b.getPos().dist(new Vector(x, y)) < b.getRadius()) {
+                balls.remove(b);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void scheduleCollisions(Ball b)
     {
         if (b.getVel().x > 0) {
@@ -119,8 +135,8 @@ public class Game extends JPanel
                     position = b2.getPos().sub(b.getPos()),
                     velocity = b2.getVel().sub(b.getVel());
             double
-                    dist = b.getRadius() + b2.getRadius(),
-                    discriminant = Math.pow(position.dot(velocity), 2) - velocity.dot(velocity) * (position.dot(position) - Math.pow(dist, 2));
+                    distSquared = Math.pow(b.getRadius() + b2.getRadius(), 2),
+                    discriminant = Math.pow(position.dot(velocity), 2) - velocity.dot(velocity) * (position.dot(position) - distSquared);
 
             if (position.dot(velocity) < 0 && discriminant >= 0) {
                 collisions.add(new BallCollision(
@@ -131,3 +147,4 @@ public class Game extends JPanel
         }
     }
 }
+ 

@@ -4,6 +4,11 @@ public class Collision implements Comparable<Collision>
     protected Ball[] balls;
     protected int hits;
 
+    public Collision()
+    {
+        when = Long.MAX_VALUE;
+    }
+
     public Long getWhen()
     {
         return when;
