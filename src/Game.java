@@ -6,7 +6,7 @@ import java.util.*;
 public class Game extends JPanel
 {
     private long currentTime = 0, nextCollisionTime;
-    private final int FPS = 50, WIDTH = 500, HEIGHT = 500, GRID = 20;
+    private final int FPS = 50, WIDTH = 500, HEIGHT = 500;
     private final long START_TIME, TIME_INCREMENT = (long) Math.pow(10, 9) / FPS;
     private ArrayList<Ball> balls = new ArrayList<>();
     private PriorityQueue<Collision> collisions = new PriorityQueue<>();
@@ -14,10 +14,9 @@ public class Game extends JPanel
     public Game()
     {
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
-                if (!removeBall(e.getX(), e.getY())) {
-                    addBall(e.getX(), e.getY());
-                }
+                addBall(e.getX(), e.getY());
             }
         });
 
@@ -80,24 +79,13 @@ public class Game extends JPanel
                 y,
                 (Math.random() - 0.5) * 200,
                 (Math.random() - 0.5) * 200,
-                (Math.random()) * 15 + 5,
+                (Math.random()) * 20 + 5,
                 (int) (Math.random() * 255),
                 (int) (Math.random() * 255),
                 (int) (Math.random() * 255)
         ));
         scheduleCollisions(balls.get(balls.size() - 1));
         nextCollisionTime = collisions.peek().getWhen();
-    }
-
-    public boolean removeBall(double x, double y)
-    {
-        for (Ball b : balls) {
-            if (b.getPos().dist(new Vector(x, y)) < b.getRadius()) {
-                balls.remove(b);
-                return true;
-            }
-        }
-        return false;
     }
 
     public void scheduleCollisions(Ball b)
