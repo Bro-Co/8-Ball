@@ -1,4 +1,4 @@
-# Particle Collision Simulator
+# Particle Collision Simulator 🔮
 
 A Newtonian simulation of particle collisions in a 2D enviornment, built from the ground up using **Java**.
 
